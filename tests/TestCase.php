@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Misaf\VendraCustomPage\Tests;
 
 use Illuminate\Support\Facades\Http;
-use Misaf\VendraCustomPage\CustomPageServiceProvider;
+use Misaf\VendraCustomPage\Providers\CustomPageServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Override;
 
