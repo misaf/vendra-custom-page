@@ -59,7 +59,8 @@ final class CustomPageCategoryForm
                     ->columnSpanFull()
                     ->image()
                     ->label(__('vendra-custom-page::attributes.image'))
-                    ->panelLayout('grid'),
+                    ->panelLayout('grid')
+                    ->responsiveImages(),
 
                 Toggle::make('status')
                     ->afterStateUpdated(fn(Livewire $livewire) => $livewire->validateOnly("data.status"))
