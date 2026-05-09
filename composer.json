@@ -32,7 +32,7 @@
 		"illuminate/support": "^11.0 || ^12.0",
 		"lara-zeus/spatie-translatable": "^2.0",
 		"misaf/vendra-activity-log": "dev-master",
-		"misaf/vendra-tenant": "^12.0",
+		"misaf/vendra-tenant": "dev-master",
 		"mokhosh/filament-jalali": "5.1",
 		"spatie/eloquent-sortable": "^5.0",
 		"spatie/laravel-package-tools": "^1.0",
