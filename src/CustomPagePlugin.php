@@ -9,9 +9,11 @@ use Filament\Panel;
 
 final class CustomPagePlugin implements Plugin
 {
+    public const string ID = 'vendra-custom-page';
+
     public function getId(): string
     {
-        return 'vendra-custom-page';
+        return self::ID;
     }
 
     public static function make(): static
