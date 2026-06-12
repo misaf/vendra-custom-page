@@ -6,6 +6,7 @@ namespace Misaf\VendraCustomPage\Providers;
 
 use Filament\Panel;
 use Illuminate\Foundation\Console\AboutCommand;
+use Misaf\VendraCustomPage\Console\Commands\SeedCommand;
 use Misaf\VendraCustomPage\CustomPagePlugin;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -21,6 +22,7 @@ final class CustomPageServiceProvider extends PackageServiceProvider
             ->hasMigrations([
                 'create_custom_pages_table'
             ])
+            ->hasCommands(SeedCommand::class)
             ->hasInstallCommand(function (InstallCommand $command): void {
                 $command->askToStarRepoOnGitHub('misaf/vendra-custom-page');
             });
