@@ -7,6 +7,7 @@ namespace Misaf\VendraCustomPage\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,6 +43,7 @@ use Spatie\Translatable\HasTranslations;
 #[Fillable(['name', 'description', 'slug', 'position', 'status'])]
 #[Hidden(['tenant_id'])]
 #[ObservedBy([CustomPageCategoryObserver::class])]
+#[UseFactory(CustomPageCategoryFactory::class)]
 final class CustomPageCategory extends Model implements HasMedia, Sortable
 {
     use BelongsToTenant;
