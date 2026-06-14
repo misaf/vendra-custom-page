@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Misaf\VendraCustomPage\Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
@@ -12,10 +13,9 @@ use Misaf\VendraTenant\Models\Tenant;
 /**
  * @extends Factory<CustomPageCategory>
  */
+#[UseModel(CustomPageCategory::class)]
 final class CustomPageCategoryFactory extends Factory
 {
-    protected $model = CustomPageCategory::class;
-
     public function definition(): array
     {
         return [
