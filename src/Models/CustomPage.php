@@ -6,6 +6,7 @@ namespace Misaf\VendraCustomPage\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Misaf\VendraActivityLog\Concerns\HasDefaultActivityLogOptions;
+use Misaf\VendraCustomPage\Database\Factories\CustomPageFactory;
 use Misaf\VendraMultimedia\Concerns\HasDefaultMediaConversions;
 use Misaf\VendraTenant\Traits\BelongsToTenant;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -39,6 +41,7 @@ use Spatie\Translatable\HasTranslations;
  */
 #[Fillable(['custom_page_category_id', 'name', 'description', 'slug', 'position', 'status'])]
 #[Hidden(['tenant_id'])]
+#[UseFactory(CustomPageFactory::class)]
 final class CustomPage extends Model implements HasMedia, Sortable
 {
     use BelongsToTenant;
@@ -48,7 +51,7 @@ final class CustomPage extends Model implements HasMedia, Sortable
         HasDefaultMediaConversions::registerMediaConversions insteadof InteractsWithMedia;
     }
 
-    /** @use HasFactory<CustomPageCategoryFactory> */
+    /** @use HasFactory<CustomPageFactory> */
     use HasFactory;
     use HasTranslations;
     use LogsActivity;
