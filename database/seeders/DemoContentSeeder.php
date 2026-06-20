@@ -4,111 +4,141 @@ declare(strict_types=1);
 
 namespace Misaf\VendraCustomPage\Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Validator;
+use Misaf\VendraCustomPage\Database\Factories\CustomPageCategoryFactory;
+use Misaf\VendraCustomPage\Database\Factories\CustomPageFactory;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
+use Misaf\VendraSupport\Database\Seeders\TenantDemoContentSeeder;
 use Misaf\VendraTenant\Models\Tenant;
 
-final class DemoContentSeeder extends Seeder
+final class DemoContentSeeder extends TenantDemoContentSeeder
 {
-    public function run(): void
+    protected function seedFactoryRecords(Tenant $tenant): void
     {
-        $tenant = Tenant::current();
-
-        if ( ! $tenant) {
-            $this->command?->error('Tenants not found. Please run TenantSeeder first.');
-            return;
-        }
-
-        $this->seedCustomPages($tenant);
+        CustomPageCategoryFactory::new()
+            ->forTenant($tenant)
+            ->enabled()
+            ->count(2)
+            ->create()
+            ->each(fn(CustomPageCategory $category): mixed => CustomPageFactory::new()
+                ->forCategory($category)
+                ->enabled()
+                ->count(2)
+                ->create());
     }
 
-    private function seedCustomPages(Tenant $tenant): void
+    protected function seedFixtureRecord(Tenant $tenant, array $record): void
     {
-        $locales = config('app.supported_locales', ['en', 'fa']);
+        $data = $this->validatedFixtureRecord($record);
 
-        $categories = [
-            [
-                'base_name' => [
-                    'en' => 'General',
-                    'fa' => 'عمومی',
-                ],
-                'base_description' => [
-                    'en' => 'General description goes here',
-                    'fa' => 'توضیحات عمومی اینجا قرار می‌گیرد',
-                ],
-                'status'       => true,
-                'custom_pages' => [
-                    [
-                        'base_name' => [
-                            'en' => 'About Us',
-                            'fa' => 'درباره ما',
-                        ],
-                        'base_description' => [
-                            'en' => 'About us page content',
-                            'fa' => 'محتوای صفحه درباره ما',
-                        ],
-                        'status' => true,
-                    ],
-                    [
-                        'base_name' => [
-                            'en' => 'Contact',
-                            'fa' => 'تماس با ما',
-                        ],
-                        'base_description' => [
-                            'en' => 'Contact page content',
-                            'fa' => 'محتوای صفحه تماس',
-                        ],
-                        'status' => true,
-                    ],
-                ],
-            ],
-        ];
-
-        foreach ($categories as $categoryData) {
-            $categoryName = $this->buildTranslations($categoryData['base_name'], $locales);
-            $categoryDescription = $this->buildTranslations($categoryData['base_description'], $locales);
-
-            $category = CustomPageCategory::query()->updateOrCreate(
-                ['slug' => Str::slug($categoryName['en'])],
-                [
-                    'name'        => $categoryName,
-                    'description' => $categoryDescription,
-                    'status'      => $categoryData['status'],
-                ],
-            );
-
-            foreach ($categoryData['custom_pages'] as $pageData) {
-                $pageName = $this->buildTranslations($pageData['base_name'], $locales);
-                $pageDescription = $this->buildTranslations($pageData['base_description'], $locales);
-
-                $category->customPages()->updateOrCreate(
-                    ['slug' => Str::slug($pageName['en'])],
-                    [
-                        'name'        => $pageName,
-                        'description' => $pageDescription,
-                        'status'      => $pageData['status'],
-                    ],
-                );
-            }
-        }
-
-        $this->command?->info("Custom pages seeded successfully for {$tenant->slug} tenant.");
+        $this->handleSeedFixtureRecord($tenant, $data);
     }
 
     /**
-     * @param  array<string, string>  $baseTranslations
-     * @param  array<int, string>  $locales
-     * @return array<string, string>
+     * @param array{
+     *     name: non-empty-array<string, string>,
+     *     description: non-empty-array<string, string>,
+     *     slug: non-empty-array<string, string>,
+     *     status: bool,
+     *     custom_pages: list<array{
+     *         name: non-empty-array<string, string>,
+     *         description: non-empty-array<string, string>,
+     *         slug: non-empty-array<string, string>,
+     *         status: bool
+     *     }>
+     * } $data
      */
-    private function buildTranslations(array $baseTranslations, array $locales, string $fallback = 'en'): array
+    private function handleSeedFixtureRecord(Tenant $tenant, array $data): void
     {
-        $translations = [];
+        $category = new CustomPageCategory([
+            'name'        => $data['name'],
+            'description' => $data['description'],
+            'slug'        => $data['slug'],
+            'status'      => $data['status'],
+        ]);
 
-        foreach ($locales as $locale) {
-            $translations[$locale] = $baseTranslations[$locale] ?? $baseTranslations[$fallback] ?? '';
+        $category->tenant_id = $tenant->id;
+        $category->save();
+
+        foreach ($data['custom_pages'] as $pageRecord) {
+            $this->handleCustomPageFixtureRecord($tenant, $category, $pageRecord);
         }
+    }
 
-        return $translations;
+    /**
+     * @param array{
+     *     name: non-empty-array<string, string>,
+     *     description: non-empty-array<string, string>,
+     *     slug: non-empty-array<string, string>,
+     *     status: bool
+     * } $pageRecord
+     */
+    private function handleCustomPageFixtureRecord(Tenant $tenant, CustomPageCategory $category, array $pageRecord): void
+    {
+        $page = $category->customPages()->make([
+            'name'        => $pageRecord['name'],
+            'description' => $pageRecord['description'],
+            'slug'        => $pageRecord['slug'],
+            'status'      => $pageRecord['status'],
+        ]);
+
+        $page->tenant_id = $tenant->id;
+        $page->save();
+    }
+
+    /**
+     * @param array<string, mixed> $record
+     *
+     * @return array{
+     *     name: non-empty-array<string, string>,
+     *     description: non-empty-array<string, string>,
+     *     slug: non-empty-array<string, string>,
+     *     status: bool,
+     *     custom_pages: list<array{
+     *         name: non-empty-array<string, string>,
+     *         description: non-empty-array<string, string>,
+     *         slug: non-empty-array<string, string>,
+     *         status: bool
+     *     }>
+     * }
+     */
+    private function validatedFixtureRecord(array $record): array
+    {
+        /** @var array{
+         *     name: non-empty-array<string, string>,
+         *     description: non-empty-array<string, string>,
+         *     slug: non-empty-array<string, string>,
+         *     status: bool,
+         *     custom_pages: list<array{
+         *         name: non-empty-array<string, string>,
+         *         description: non-empty-array<string, string>,
+         *         slug: non-empty-array<string, string>,
+         *         status: bool
+         *     }>
+         * } $validated
+         */
+        $validated = Validator::make(
+            data: $record,
+            rules: [
+                'name'                            => ['required', 'array', 'min:1'],
+                'name.*'                          => ['required', 'string'],
+                'description'                     => ['required', 'array', 'min:1'],
+                'description.*'                   => ['required', 'string'],
+                'slug'                            => ['required', 'array', 'min:1'],
+                'slug.*'                          => ['required', 'string'],
+                'status'                          => ['required', 'boolean'],
+                'custom_pages'                    => ['required', 'array', 'list'],
+                'custom_pages.*'                  => ['required', 'array:name,description,slug,status'],
+                'custom_pages.*.name'             => ['required', 'array', 'min:1'],
+                'custom_pages.*.name.*'           => ['required', 'string'],
+                'custom_pages.*.description'      => ['required', 'array', 'min:1'],
+                'custom_pages.*.description.*'    => ['required', 'string'],
+                'custom_pages.*.slug'             => ['required', 'array', 'min:1'],
+                'custom_pages.*.slug.*'           => ['required', 'string'],
+                'custom_pages.*.status'           => ['required', 'boolean'],
+            ],
+        )->validate();
+
+        return $validated;
     }
 }
