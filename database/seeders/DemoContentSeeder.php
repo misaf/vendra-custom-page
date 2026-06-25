@@ -8,11 +8,33 @@ use Illuminate\Support\Facades\Validator;
 use Misaf\VendraCustomPage\Database\Factories\CustomPageCategoryFactory;
 use Misaf\VendraCustomPage\Database\Factories\CustomPageFactory;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
-use Misaf\VendraSupport\Database\Seeders\TenantDemoContentSeeder;
+use Misaf\VendraSupport\Database\Seeders\DemoContentSeeder as BaseDemoContentSeeder;
+use Misaf\VendraTenant\Concerns\RequiresCurrentTenant;
 use Misaf\VendraTenant\Models\Tenant;
 
-final class DemoContentSeeder extends TenantDemoContentSeeder
+final class DemoContentSeeder extends BaseDemoContentSeeder
 {
+    use RequiresCurrentTenant;
+
+    protected function seedFactories(): void
+    {
+        $tenant = $this->currentTenant();
+
+        $this->seedFactoryRecords($tenant);
+    }
+
+    /**
+     * @param list<array<string, mixed>> $records
+     */
+    protected function seedFixtures(array $records): void
+    {
+        $tenant = $this->currentTenant();
+
+        foreach ($records as $record) {
+            $this->seedFixtureRecord($tenant, $record);
+        }
+    }
+
     protected function seedFactoryRecords(Tenant $tenant): void
     {
         CustomPageCategoryFactory::new()
@@ -20,8 +42,8 @@ final class DemoContentSeeder extends TenantDemoContentSeeder
             ->enabled()
             ->count(2)
             ->create()
-            ->each(fn(CustomPageCategory $category): mixed => CustomPageFactory::new()
-                ->forCategory($category)
+            ->each(fn(CustomPageCategory $customPageCategory): mixed => CustomPageFactory::new()
+                ->forCategory($customPageCategory)
                 ->enabled()
                 ->count(2)
                 ->create());
@@ -50,18 +72,18 @@ final class DemoContentSeeder extends TenantDemoContentSeeder
      */
     private function handleSeedFixtureRecord(Tenant $tenant, array $data): void
     {
-        $category = new CustomPageCategory([
+        $customPageCategory = new CustomPageCategory([
             'name'        => $data['name'],
             'description' => $data['description'],
             'slug'        => $data['slug'],
             'status'      => $data['status'],
         ]);
 
-        $category->tenant_id = $tenant->id;
-        $category->save();
+        $customPageCategory->tenant_id = $tenant->id;
+        $customPageCategory->save();
 
-        foreach ($data['custom_pages'] as $pageRecord) {
-            $this->handleCustomPageFixtureRecord($tenant, $category, $pageRecord);
+        foreach ($data['custom_pages'] as $customPageRecord) {
+            $this->handleCustomPageFixtureRecord($tenant, $customPageCategory, $customPageRecord);
         }
     }
 
@@ -71,19 +93,19 @@ final class DemoContentSeeder extends TenantDemoContentSeeder
      *     description: non-empty-array<string, string>,
      *     slug: non-empty-array<string, string>,
      *     status: bool
-     * } $pageRecord
+     * } $customPageRecord
      */
-    private function handleCustomPageFixtureRecord(Tenant $tenant, CustomPageCategory $category, array $pageRecord): void
+    private function handleCustomPageFixtureRecord(Tenant $tenant, CustomPageCategory $customPageCategory, array $customPageRecord): void
     {
-        $page = $category->customPages()->make([
-            'name'        => $pageRecord['name'],
-            'description' => $pageRecord['description'],
-            'slug'        => $pageRecord['slug'],
-            'status'      => $pageRecord['status'],
+        $customPage = $customPageCategory->customPages()->make([
+            'name'        => $customPageRecord['name'],
+            'description' => $customPageRecord['description'],
+            'slug'        => $customPageRecord['slug'],
+            'status'      => $customPageRecord['status'],
         ]);
 
-        $page->tenant_id = $tenant->id;
-        $page->save();
+        $customPage->tenant_id = $tenant->id;
+        $customPage->save();
     }
 
     /**
@@ -141,4 +163,5 @@ final class DemoContentSeeder extends TenantDemoContentSeeder
 
         return $validated;
     }
+
 }

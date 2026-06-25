@@ -7,9 +7,9 @@ namespace Misaf\VendraCustomPage\Console\Commands;
 use Misaf\VendraCustomPage\CustomPagePlugin;
 use Misaf\VendraCustomPage\Database\Seeders\DemoContentSeeder;
 use Misaf\VendraCustomPage\Database\Seeders\PermissionPolicySeeder;
-use Misaf\VendraSupport\Console\Commands\BaseSeedCommand;
+use Misaf\VendraTenant\Console\Commands\TenantSeedCommand;
 
-final class SeedCommand extends BaseSeedCommand
+final class SeedCommand extends TenantSeedCommand
 {
     protected const string MODULE_NAME = CustomPagePlugin::ID;
 

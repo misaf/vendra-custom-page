@@ -8,19 +8,29 @@ use Misaf\VendraCustomPage\CustomPagePlugin;
 use Misaf\VendraCustomPage\Enums\CustomPageCategoryPolicyEnum;
 use Misaf\VendraCustomPage\Enums\CustomPagePolicyEnum;
 use Misaf\VendraSupport\Database\Seeders\PermissionPolicySeeder as BasePermissionPolicySeeder;
+use Misaf\VendraTenant\Concerns\RequiresCurrentTenant;
 
 final class PermissionPolicySeeder extends BasePermissionPolicySeeder
 {
+    use RequiresCurrentTenant;
+
     protected const string MODULE_NAME = CustomPagePlugin::ID;
+
+    public function run(): void
+    {
+        $tenant = $this->currentTenant();
+
+        $this->seedPermissionPolicies($tenant->getKey());
+    }
 
     /**
      * @return list<string>
      */
     protected function policies(): array
     {
-        return array_values(array_unique([
+        return [
             ...array_column(CustomPageCategoryPolicyEnum::cases(), 'value'),
             ...array_column(CustomPagePolicyEnum::cases(), 'value'),
-        ]));
+        ];
     }
 }
