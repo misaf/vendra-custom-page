@@ -137,7 +137,7 @@ final class CustomPageTable
                 Group::make('customPageCategory.name')
                     ->label(__('vendra-custom-page::navigation.custom_page_category'))
                     ->getTitleFromRecordUsing(function (CustomPage $record, Livewire $livewire) {
-                        return $record->customPageCategory->getTranslation('name', $livewire->activeLocale);
+                        return $record->customPageCategory?->getTranslation('name', $livewire->activeLocale);
                     })
             );
     }

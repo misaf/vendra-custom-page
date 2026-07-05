@@ -8,6 +8,7 @@ use Filament\Panel;
 use Illuminate\Foundation\Console\AboutCommand;
 use Misaf\VendraCustomPage\Console\Commands\SeedCommand;
 use Misaf\VendraCustomPage\CustomPagePlugin;
+use Misaf\VendraSupport\Support\TenantSeeders;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -41,6 +42,8 @@ final class CustomPageServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        $this->app->make(TenantSeeders::class)->register('vendra-custom-page:seed', priority: 60);
+
         AboutCommand::add('Vendra Custom Page', fn() => ['Version' => 'dev-master']);
     }
 }
