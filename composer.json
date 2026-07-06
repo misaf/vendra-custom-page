@@ -59,8 +59,12 @@
 	"autoload": {
 		"psr-4": {
 			"Misaf\\VendraCustomPage\\": "src/",
+			"Misaf\\VendraCustomPage\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
 			"Misaf\\VendraCustomPage\\Database\\Factories\\": "database/factories/",
-			"Misaf\\VendraCustomPage\\Database\\Seeders\\": "database/seeders/",
 			"Misaf\\VendraCustomPage\\Tests\\": "tests/"
 		}
 	},

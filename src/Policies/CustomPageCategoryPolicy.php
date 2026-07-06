@@ -5,71 +5,71 @@ declare(strict_types=1);
 namespace Misaf\VendraCustomPage\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Misaf\VendraCustomPage\Enums\CustomPageCategoryPolicyEnum;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
-use Misaf\VendraUser\Models\User;
 
 final class CustomPageCategoryPolicy
 {
     use HandlesAuthorization;
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::CREATE);
+        return $user->can(CustomPageCategoryPolicyEnum::CREATE->value);
     }
 
-    public function delete(User $user, CustomPageCategory $customPageCategory): bool
+    public function delete(Authorizable $user, CustomPageCategory $customPageCategory): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::DELETE);
+        return $user->can(CustomPageCategoryPolicyEnum::DELETE->value);
     }
 
-    public function deleteAny(User $user): bool
+    public function deleteAny(Authorizable $user): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::DELETE_ANY);
+        return $user->can(CustomPageCategoryPolicyEnum::DELETE_ANY->value);
     }
 
-    public function forceDelete(User $user, CustomPageCategory $customPageCategory): bool
+    public function forceDelete(Authorizable $user, CustomPageCategory $customPageCategory): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::FORCE_DELETE);
+        return $user->can(CustomPageCategoryPolicyEnum::FORCE_DELETE->value);
     }
 
-    public function forceDeleteAny(User $user): bool
+    public function forceDeleteAny(Authorizable $user): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::FORCE_DELETE_ANY);
+        return $user->can(CustomPageCategoryPolicyEnum::FORCE_DELETE_ANY->value);
     }
 
-    public function reorder(User $user): bool
+    public function reorder(Authorizable $user): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::REORDER);
+        return $user->can(CustomPageCategoryPolicyEnum::REORDER->value);
     }
 
-    public function replicate(User $user, CustomPageCategory $customPageCategory): bool
+    public function replicate(Authorizable $user, CustomPageCategory $customPageCategory): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::REPLICATE);
+        return $user->can(CustomPageCategoryPolicyEnum::REPLICATE->value);
     }
 
-    public function restore(User $user, CustomPageCategory $customPageCategory): bool
+    public function restore(Authorizable $user, CustomPageCategory $customPageCategory): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::RESTORE);
+        return $user->can(CustomPageCategoryPolicyEnum::RESTORE->value);
     }
 
-    public function restoreAny(User $user): bool
+    public function restoreAny(Authorizable $user): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::RESTORE_ANY);
+        return $user->can(CustomPageCategoryPolicyEnum::RESTORE_ANY->value);
     }
 
-    public function update(User $user, CustomPageCategory $customPageCategory): bool
+    public function update(Authorizable $user, CustomPageCategory $customPageCategory): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::UPDATE);
+        return $user->can(CustomPageCategoryPolicyEnum::UPDATE->value);
     }
 
-    public function view(User $user, CustomPageCategory $customPageCategory): bool
+    public function view(Authorizable $user, CustomPageCategory $customPageCategory): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::VIEW);
+        return $user->can(CustomPageCategoryPolicyEnum::VIEW->value);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return $user->can(CustomPageCategoryPolicyEnum::VIEW_ANY);
+        return $user->can(CustomPageCategoryPolicyEnum::VIEW_ANY->value);
     }
 }

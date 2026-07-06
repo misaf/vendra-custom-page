@@ -5,71 +5,71 @@ declare(strict_types=1);
 namespace Misaf\VendraCustomPage\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Misaf\VendraCustomPage\Enums\CustomPagePolicyEnum;
 use Misaf\VendraCustomPage\Models\CustomPage;
-use Misaf\VendraUser\Models\User;
 
 final class CustomPagePolicy
 {
     use HandlesAuthorization;
 
-    public function create(User $user): bool
+    public function create(Authorizable $user): bool
     {
-        return $user->can(CustomPagePolicyEnum::CREATE);
+        return $user->can(CustomPagePolicyEnum::CREATE->value);
     }
 
-    public function delete(User $user, CustomPage $customPage): bool
+    public function delete(Authorizable $user, CustomPage $customPage): bool
     {
-        return $user->can(CustomPagePolicyEnum::DELETE);
+        return $user->can(CustomPagePolicyEnum::DELETE->value);
     }
 
-    public function deleteAny(User $user): bool
+    public function deleteAny(Authorizable $user): bool
     {
-        return $user->can(CustomPagePolicyEnum::DELETE_ANY);
+        return $user->can(CustomPagePolicyEnum::DELETE_ANY->value);
     }
 
-    public function forceDelete(User $user, CustomPage $customPage): bool
+    public function forceDelete(Authorizable $user, CustomPage $customPage): bool
     {
-        return $user->can(CustomPagePolicyEnum::FORCE_DELETE);
+        return $user->can(CustomPagePolicyEnum::FORCE_DELETE->value);
     }
 
-    public function forceDeleteAny(User $user): bool
+    public function forceDeleteAny(Authorizable $user): bool
     {
-        return $user->can(CustomPagePolicyEnum::FORCE_DELETE_ANY);
+        return $user->can(CustomPagePolicyEnum::FORCE_DELETE_ANY->value);
     }
 
-    public function reorder(User $user): bool
+    public function reorder(Authorizable $user): bool
     {
-        return $user->can(CustomPagePolicyEnum::REORDER);
+        return $user->can(CustomPagePolicyEnum::REORDER->value);
     }
 
-    public function replicate(User $user, CustomPage $customPage): bool
+    public function replicate(Authorizable $user, CustomPage $customPage): bool
     {
-        return $user->can(CustomPagePolicyEnum::REPLICATE);
+        return $user->can(CustomPagePolicyEnum::REPLICATE->value);
     }
 
-    public function restore(User $user, CustomPage $customPage): bool
+    public function restore(Authorizable $user, CustomPage $customPage): bool
     {
-        return $user->can(CustomPagePolicyEnum::RESTORE);
+        return $user->can(CustomPagePolicyEnum::RESTORE->value);
     }
 
-    public function restoreAny(User $user): bool
+    public function restoreAny(Authorizable $user): bool
     {
-        return $user->can(CustomPagePolicyEnum::RESTORE_ANY);
+        return $user->can(CustomPagePolicyEnum::RESTORE_ANY->value);
     }
 
-    public function update(User $user, CustomPage $customPage): bool
+    public function update(Authorizable $user, CustomPage $customPage): bool
     {
-        return $user->can(CustomPagePolicyEnum::UPDATE);
+        return $user->can(CustomPagePolicyEnum::UPDATE->value);
     }
 
-    public function view(User $user, CustomPage $customPage): bool
+    public function view(Authorizable $user, CustomPage $customPage): bool
     {
-        return $user->can(CustomPagePolicyEnum::VIEW);
+        return $user->can(CustomPagePolicyEnum::VIEW->value);
     }
 
-    public function viewAny(User $user): bool
+    public function viewAny(Authorizable $user): bool
     {
-        return $user->can(CustomPagePolicyEnum::VIEW_ANY);
+        return $user->can(CustomPagePolicyEnum::VIEW_ANY->value);
     }
 }
