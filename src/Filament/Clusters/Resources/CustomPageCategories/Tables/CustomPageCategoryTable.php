@@ -25,8 +25,8 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint;
 use Filament\Tables\Table;
 use Illuminate\Support\Number;
 use Livewire\Component as Livewire;
-use Misaf\VendraCustomPage\Filament\Clusters\Resources\Concerns\HasDefaultAvatarImageUrl;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
+use Misaf\VendraSupport\Filament\Concerns\HasDefaultAvatarImageUrl;
 
 final class CustomPageCategoryTable
 {

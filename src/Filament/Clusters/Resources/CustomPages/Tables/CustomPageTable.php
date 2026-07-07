@@ -24,9 +24,9 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Oper
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Livewire\Component as Livewire;
-use Misaf\VendraCustomPage\Filament\Clusters\Resources\Concerns\HasDefaultAvatarImageUrl;
 use Misaf\VendraCustomPage\Models\CustomPage;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
+use Misaf\VendraSupport\Filament\Concerns\HasDefaultAvatarImageUrl;
 
 final class CustomPageTable
 {

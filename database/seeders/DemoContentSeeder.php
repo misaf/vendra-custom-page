@@ -8,37 +8,15 @@ use Illuminate\Support\Facades\Validator;
 use Misaf\VendraCustomPage\Database\Factories\CustomPageCategoryFactory;
 use Misaf\VendraCustomPage\Database\Factories\CustomPageFactory;
 use Misaf\VendraCustomPage\Models\CustomPageCategory;
-use Misaf\VendraSupport\Concerns\RequiresCurrentTenant;
 use Misaf\VendraSupport\Database\Seeders\DemoContentSeeder as BaseDemoContentSeeder;
-use Misaf\VendraTenant\Models\Tenant;
 
 final class DemoContentSeeder extends BaseDemoContentSeeder
 {
-    use RequiresCurrentTenant;
-
     protected function seedFactories(): void
     {
-        $tenant = $this->currentTenant();
+        $this->currentTenantOrNull();
 
-        $this->seedFactoryRecords($tenant);
-    }
-
-    /**
-     * @param list<array<string, mixed>> $records
-     */
-    protected function seedFixtures(array $records): void
-    {
-        $tenant = $this->currentTenant();
-
-        foreach ($records as $record) {
-            $this->seedFixtureRecord($tenant, $record);
-        }
-    }
-
-    protected function seedFactoryRecords(Tenant $tenant): void
-    {
         CustomPageCategoryFactory::new()
-            ->forTenant($tenant)
             ->enabled()
             ->count(2)
             ->create()
@@ -49,11 +27,16 @@ final class DemoContentSeeder extends BaseDemoContentSeeder
                 ->create());
     }
 
-    protected function seedFixtureRecord(Tenant $tenant, array $record): void
+    /**
+     * @param list<array<string, mixed>> $records
+     */
+    protected function seedFixtures(array $records): void
     {
-        $data = $this->validatedFixtureRecord($record);
+        $this->currentTenantOrNull();
 
-        $this->handleSeedFixtureRecord($tenant, $data);
+        foreach ($records as $record) {
+            $this->handleSeedFixtureRecord($this->validatedFixtureRecord($record));
+        }
     }
 
     /**
@@ -70,20 +53,17 @@ final class DemoContentSeeder extends BaseDemoContentSeeder
      *     }>
      * } $data
      */
-    private function handleSeedFixtureRecord(Tenant $tenant, array $data): void
+    private function handleSeedFixtureRecord(array $data): void
     {
-        $customPageCategory = new CustomPageCategory([
+        $customPageCategory = CustomPageCategory::create([
             'name'        => $data['name'],
             'description' => $data['description'],
             'slug'        => $data['slug'],
             'status'      => $data['status'],
         ]);
 
-        $customPageCategory->tenant_id = $tenant->id;
-        $customPageCategory->save();
-
         foreach ($data['custom_pages'] as $customPageRecord) {
-            $this->handleCustomPageFixtureRecord($tenant, $customPageCategory, $customPageRecord);
+            $this->handleCustomPageFixtureRecord($customPageCategory, $customPageRecord);
         }
     }
 
@@ -95,17 +75,14 @@ final class DemoContentSeeder extends BaseDemoContentSeeder
      *     status: bool
      * } $customPageRecord
      */
-    private function handleCustomPageFixtureRecord(Tenant $tenant, CustomPageCategory $customPageCategory, array $customPageRecord): void
+    private function handleCustomPageFixtureRecord(CustomPageCategory $customPageCategory, array $customPageRecord): void
     {
-        $customPage = $customPageCategory->customPages()->make([
+        $customPageCategory->customPages()->create([
             'name'        => $customPageRecord['name'],
             'description' => $customPageRecord['description'],
             'slug'        => $customPageRecord['slug'],
             'status'      => $customPageRecord['status'],
         ]);
-
-        $customPage->tenant_id = $tenant->id;
-        $customPage->save();
     }
 
     /**
@@ -142,26 +119,25 @@ final class DemoContentSeeder extends BaseDemoContentSeeder
         $validated = Validator::make(
             data: $record,
             rules: [
-                'name'                            => ['required', 'array', 'min:1'],
-                'name.*'                          => ['required', 'string'],
-                'description'                     => ['required', 'array', 'min:1'],
-                'description.*'                   => ['required', 'string'],
-                'slug'                            => ['required', 'array', 'min:1'],
-                'slug.*'                          => ['required', 'string'],
-                'status'                          => ['required', 'boolean'],
-                'custom_pages'                    => ['required', 'array', 'list'],
-                'custom_pages.*'                  => ['required', 'array:name,description,slug,status'],
-                'custom_pages.*.name'             => ['required', 'array', 'min:1'],
-                'custom_pages.*.name.*'           => ['required', 'string'],
-                'custom_pages.*.description'      => ['required', 'array', 'min:1'],
-                'custom_pages.*.description.*'    => ['required', 'string'],
-                'custom_pages.*.slug'             => ['required', 'array', 'min:1'],
-                'custom_pages.*.slug.*'           => ['required', 'string'],
-                'custom_pages.*.status'           => ['required', 'boolean'],
+                'name'                         => ['required', 'array', 'min:1'],
+                'name.*'                       => ['required', 'string'],
+                'description'                  => ['required', 'array', 'min:1'],
+                'description.*'                => ['required', 'string'],
+                'slug'                         => ['required', 'array', 'min:1'],
+                'slug.*'                       => ['required', 'string'],
+                'status'                       => ['required', 'boolean'],
+                'custom_pages'                 => ['required', 'array', 'list'],
+                'custom_pages.*'               => ['required', 'array:name,description,slug,status'],
+                'custom_pages.*.name'          => ['required', 'array', 'min:1'],
+                'custom_pages.*.name.*'        => ['required', 'string'],
+                'custom_pages.*.description'   => ['required', 'array', 'min:1'],
+                'custom_pages.*.description.*' => ['required', 'string'],
+                'custom_pages.*.slug'          => ['required', 'array', 'min:1'],
+                'custom_pages.*.slug.*'        => ['required', 'string'],
+                'custom_pages.*.status'        => ['required', 'boolean'],
             ],
         )->validate();
 
         return $validated;
     }
-
 }
