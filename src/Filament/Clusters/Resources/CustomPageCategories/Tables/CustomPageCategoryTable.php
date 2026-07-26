@@ -82,13 +82,11 @@ final class CustomPageCategoryTable
                 ->icon(Heroicon::Link)
                 ->toggleable(isToggledHiddenByDefault: true),
 
-            ToggleColumn::make('status')
-                ->label(__('vendra-custom-page::attributes.status'))
+            ToggleColumn::make('active')
+                ->label(__('vendra-custom-page::attributes.active'))
                 ->onIcon(Heroicon::Bolt),
 
             TextColumn::make('created_at')
-                ->alignCenter()
-                ->badge()
                 ->extraCellAttributes(['dir' => 'ltr'])
                 ->label(__('vendra-custom-page::attributes.created_at'))
                 ->sinceTooltip()
@@ -99,8 +97,6 @@ final class CustomPageCategoryTable
                 ),
 
             TextColumn::make('updated_at')
-                ->alignCenter()
-                ->badge()
                 ->extraCellAttributes(['dir' => 'ltr'])
                 ->label(__('vendra-custom-page::attributes.updated_at'))
                 ->sinceTooltip()
@@ -122,8 +118,8 @@ final class CustomPageCategoryTable
                 [
                     QueryBuilder::make()
                         ->constraints([
-                            BooleanConstraint::make('status')
-                                ->label(__('vendra-custom-page::attributes.status')),
+                            BooleanConstraint::make('active')
+                                ->label(__('vendra-custom-page::attributes.active')),
 
                             NumberConstraint::make('position'),
                         ]),
